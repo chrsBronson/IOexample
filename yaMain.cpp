@@ -5,15 +5,9 @@
 
 int main()
 {
-  std::vector< int > vec;
-  std::copy(
-    std::istream_iterator< int >{std::cin},
-    std::istream_iterator< int >{},
-    std::back_inserter(vec)
-  );
-  std::copy(
-    vec.cbegin(),
-    vec.cend(),
-    std::ostream_iterator< int >(std::cout, "\n")
-  );
+  using input_it_t = std::istream_iterator< int >;
+  std::vector< int > data(input_it_t{std::cin}, input_it_t{});
+
+  using output_it_t = std::ostream_iterator< int >;
+  std::copy(data.cbegin(), data.cend(), output_it_t{std::cout, "\n"});
 }
