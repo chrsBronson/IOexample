@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 namespace example
 {
   struct SomeStruct
@@ -48,7 +49,15 @@ namespace example
 int main()
 {
   example::SomeStruct newStruct(0, 0);
-  std::cin >> newStruct;
+  if(!(std::cin >> newStruct))
+  {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+    if(!(std::cin >> newStruct))
+    {
+      std::cerr << "Error\n";
+    }
+  }
   std::cout << newStruct << "\n";
   return 0;
 }
