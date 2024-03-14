@@ -20,8 +20,11 @@ namespace example
   private:
     int a_, b_;
   };
-//(num1;num2)
-  std::istream & operator>>(std::istream & is, SomeStruct & value)
+  struct DelimiterI
+  {
+    char expected;
+  };
+  std::istream & operator>>(std::istream & is, DelimiterI && exp)
   {
     std::istream::sentry guard(is);
     if (!guard)
@@ -30,24 +33,23 @@ namespace example
     }
     char c = 0;
     is >> c;
-    if (c != '(')
+    if (c != exp.expected)
     {
       is.setstate(std::ios::failbit);
+    }
+    return is;
+  }
+//(num1;num2)
+  std::istream & operator>>(std::istream & is, SomeStruct & value)
+  {
+    std::istream::sentry guard(is);
+    if (!guard)
+    {
       return is;
     }
+    using del = DelimiterI;
     int a = 0, b = 0;
-    is >> a >> c >> b;
-    if (c != ';')
-    {
-      is.setstate(std::ios::failbit);
-      return is;
-    }
-    is >> c;
-    if (c!= ')')
-    {
-      is.setstate(std::ios::failbit);
-      return is;
-    }
+    is >> del{'('} >> a >> del{';'} >> b >> del{')'};
     if (is)
     {
       value = SomeStruct(a, b);
