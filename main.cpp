@@ -20,15 +20,34 @@ namespace example
   private:
     int a_, b_;
   };
+//(num1;num2)
   std::istream & operator>>(std::istream & is, SomeStruct & value)
   {
     std::istream::sentry guard(is);
-    if(!guard)
+    if (!guard)
     {
       return is;
     }
+    char c = 0;
+    is >> c;
+    if (c != '(')
+    {
+      is.setstate(std::ios::failbit);
+      return is;
+    }
     int a = 0, b = 0;
-    is >> a >> b;
+    is >> a >> c >> b;
+    if (c != ';')
+    {
+      is.setstate(std::ios::failbit);
+      return is;
+    }
+    is >> c;
+    if (c!= ')')
+    {
+      is.setstate(std::ios::failbit);
+      return is;
+    }
     if (is)
     {
       value = SomeStruct(a, b);
@@ -42,7 +61,7 @@ namespace example
     {
       return out;
     }
-    out << value.getA() << " " << value.getB();
+    out << "(" << value.getA() << ";" << value.getB() << ")";
     return out;
   }
 }
